@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WebSocket</title>
+</head>
+<body>
+	<button id="startButton" onclick="start()">Start</button>	
+	<button id="clearText" onclick="clearText()">Clear</button>
+	<textarea id="displayTextArea" rows="30" cols="45"></textarea>
+	<script>
+		
+		const servidor = "ws://localhost:8080/webSocket/ws";
+		let conn = null;
+		
+		function start(){
+			
+			//verifica se o navegador tem suporte para webSocket
+			if(typeof(WebSocket) !== "undefined") {
+				
+				//instancia a conexao
+				conn = new WebSocket(servidor);
+				
+				//abre a conexao com o servidor
+				conn.onopen = function(){	
+					//envia uma mensagem para o servidor
+					conn.send('Ping');  
+				};
+				
+				//recebe a mensagem do servidor
+				conn.onmessage = function(message){
+					displayTextArea.value += message.data + "\n\n"; 
+				};
+				
+				//caso o servidor lance um erro, pode configurar uma mensagem
+				conn.onerror = function(){					
+					alert("Erro no servidor");					
+				};
+				
+				//verifica se o servidor está fechado
+				conn.onclose = function(){					
+					alert("Sesão fechada");
+				}
+				
+				startButton.disabled = true;
+				  
+				} else				  
+					alert("Esse navegador não é compatível com o sistema");							
+		}	
+		
+		function clearText(){			
+			displayTextArea.value = "";		
+		}
+		
+	</script>
+</body>
+</html>
